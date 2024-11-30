@@ -1,5 +1,6 @@
 import org.jetbrains.kotlinx.lincheck.*
 import org.jetbrains.kotlinx.lincheck.annotations.*
+import org.jetbrains.kotlinx.lincheck.strategy.managed.modelchecking.ModelCheckingOptions
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
 import org.junit.jupiter.api.Test
 
@@ -38,5 +39,12 @@ class MSQueueTest {
     @Test
     fun stressEmptyQueueParallelTest() = StressOptions()
         .threads(3).actorsPerThread(3).iterations(1)
+        .check(this::class)
+
+    @Test
+    fun modelCheckingTest() = ModelCheckingOptions()
+        .actorsBefore(10)
+        .threads(3).actorsPerThread(3).iterations(1)
+        .actorsAfter(10)
         .check(this::class)
 }
