@@ -34,5 +34,9 @@ class MSQueueTest {
         .threads(10).actorsPerThread(1).iterations(5)
         .actorsAfter(10)
         .check(this::class)
-    
+
+    @Test
+    fun stressEmptyQueueParallelTest() = StressOptions()
+        .threads(3).actorsPerThread(3).iterations(1)
+        .check(this::class)
 }
