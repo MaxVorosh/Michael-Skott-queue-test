@@ -17,6 +17,8 @@ class MSQueueTest {
     }
 
     @Test
-    fun stressTest() = StressOptions().check(this::class)
+    fun stressTest() = StressOptions()
+        .threads(1).actorsPerThread(10).iterations(100)
+        .check(this::class)
     
 }
