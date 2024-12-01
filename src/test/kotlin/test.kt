@@ -3,6 +3,22 @@ import org.jetbrains.kotlinx.lincheck.annotations.*
 import org.jetbrains.kotlinx.lincheck.strategy.managed.modelchecking.ModelCheckingOptions
 import org.jetbrains.kotlinx.lincheck.strategy.stress.StressOptions
 import org.junit.jupiter.api.Test
+import java.util.*
+import java.util.Optional.empty
+import java.util.Optional.of
+
+class SequentialQueue {
+    private val s = LinkedList<Int>()
+
+    fun enqueue(x: Int) { s.add(x) }
+    fun dequeue(): Optional<Int> {
+        if (s.size == 0) {
+            return empty<Int>()
+        }
+        val res: Int = s.poll()
+        return of<Int>(res)
+    }
+}
 
 class MSQueueTest {
     val q = MSQueue<Int>()
@@ -13,8 +29,8 @@ class MSQueueTest {
     }
 
     @Operation
-    fun dequeue() {
-        q.dequeue()
+    fun dequeue(): Optional<Int> {
+        return q.dequeue()
     }
 
     @Test
@@ -46,5 +62,13 @@ class MSQueueTest {
         .actorsBefore(10)
         .threads(3).actorsPerThread(3).iterations(1)
         .actorsAfter(10)
+        .check(this::class)
+
+    @Test
+    fun stressSequentialSpecTest() = StressOptions()
+        .actorsBefore(10)
+        .threads(3).actorsPerThread(3).iterations(3)
+        .actorsAfter(10)
+        .sequentialSpecification(SequentialQueue::class.java)
         .check(this::class)
 }

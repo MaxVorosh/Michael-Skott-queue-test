@@ -48,27 +48,20 @@ class MSQueue<E> {
         while (true) {
             val prevHead: Node<E> = head.get()
             val prevTail: Node<E> = tail.get()
-            val nextHead: Node<E> = prevHead.next.get()
-            if (prevHead === prevTail) {
+            val nextHead = head.get().next.get()
+            if (prevHead == prevTail) {
                 if (nextHead == null) {
-                    return empty<E>()
+                    return empty()
                 } else {
                     tail.compareAndSet(prevTail, nextHead)
                 }
             }
-            val element: E = nextHead.value.get()
-            if (element != null && nextHead.value.compareAndSet(element, null)) {
-                updateHead(prevHead, nextHead)
-                return of<E>(element)
-            } else {
-                updateHead(prevHead, nextHead)
+            else {
+                if (head.compareAndSet(prevHead, nextHead)) {
+                    val element: E = nextHead.value.get()
+                    return of(element!!)
+                }
             }
-        }
-    }
-
-    private fun updateHead(previous: Node<E>, next: Node<E>?) {
-        if (head.compareAndSet(previous, next)) {
-            previous.next.set(previous)
         }
     }
 }
